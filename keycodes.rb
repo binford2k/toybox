@@ -109,7 +109,7 @@ def keycodes(input)
       '?'   => '35',
       '~'   => '29'
   }
-  
+
   extScancodes = {
       :esc    => ['01'],
       :bksp   => ['e'],
@@ -149,35 +149,35 @@ def keycodes(input)
       :down   => ['e0', '50'],
       :right  => ['e0', '4d'],
   }
-  
+
   releaseScancodes = {
       :lshift => ['aa'],
       :rshift => ['b6'],
   }
 
-  
+
   output = []
 
   input.each do |item|
     if extScancodes.has_key?(item)
       output.concat(extScancodes[item])
     else
-      item.each_char do |c|        
+      item.each_char do |c|
         if scancodes.has_key?(c)
-          output << scancodes[c]
+          output << scancodes[c] + " " + (scancodes[c].to_i(16) + 0x80).to_s(16)
         else
           # assume we need to hit <shift>!
           output.concat(extScancodes[:lshift])
-          output << shiftedScancodes[c]
+          output << shiftedScancodes[c] + " " + (shiftedScancodes[c].to_i(16) + 0x80).to_s(16)
           output.concat(releaseScancodes[:lshift])
         end
       end
     end
   end
-  
+
   if block_given?
     output.each { |i| yield i }
   end
-  
+
   output
 end
